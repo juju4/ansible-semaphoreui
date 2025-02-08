@@ -73,6 +73,7 @@ jobs:
           # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2404-Readme.md#mysql
           sudo systemctl start mysql.service
           mysql -u root -p root -e 'show databases' || true
+          sudo env DEBIAN_FRONTEND=noninteractive apt-get purge mysql-server mysql-common -y
         if: ${{ always() }}
         continue-on-error: true
       - name: run test
