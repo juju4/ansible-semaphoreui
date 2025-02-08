@@ -68,7 +68,7 @@ jobs:
         if: ${{ always() }}
       - name: ansible-lint
         run: |
-          cd $GITHUB_WORKSPACE/$ANSIBLE_ROLE && ansible-lint
+          cd $GITHUB_WORKSPACE/$ANSIBLE_ROLE && ansible-lint -vv
         if: ${{ always() }}
       - name: TruffleHog OSS check
         uses: trufflesecurity/trufflehog@bd5e28742553ef0649d7af310dc4e3755f070b36
