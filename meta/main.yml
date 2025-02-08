@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  role_name: semaphoreui
+  author: juju4
+  description: Setup Semaphoreui with ansible
+  license: BSD
+  min_ansible_version: '1.9'
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - jammy
+        - focal
+        - bionic
+  galaxy_tags:
+    - system
+    - ci
+    - ansible
+dependencies: []

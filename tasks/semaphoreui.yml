@@ -1,0 +1,99 @@
+---
+# https://docs.semaphoreui.com/administration-guide/installation/
+
+- name: Ensure /var/_install exists
+  ansible.builtin.file:
+    path: /var/_install
+    state: directory
+    mode: '0700'
+    owner: root
+
+- name: Get Semaphore package
+  ansible.builtin.get_url:
+    url: "{{ semaphoreui_pkg_url }}"
+    dest: "/var/_install/{{ semaphoreui_pkg_url | basename }}"
+    checksum: "{{ semaphoreui_pkg_hash }}"
+    mode: '0644'
+    owner: root
+
+- name: Install Semaphore package
+  ansible.builtin.package:
+    deb: "/var/_install/{{ semaphoreui_pkg_url | basename }}"
+    state: present
+
+- name: Add semaphore user
+  ansible.builtin.user:
+    user: "{{ semaphoreui_user }}"
+    home: "{{ semaphoreui_home }}"
+
+- name: Ensure semaphore directory exist
+  ansible.builtin.file:
+    path: /etc/semaphore
+    state: directory
+    mode: '0750'
+    owner: root
+    group: "{{ semaphoreui_user }}"
+
+- name: Include random
+  ansible.builtin.include_tasks: random.yml
+  vars:
+    secretdir: "{{ semaphoreui_home }}"
+    secretprefix: .secrets-cookie_hash
+    secretlength: 32
+    secretbase64: true
+    name_random: cookie_hash
+- name: Set fact semaphoreui_cookie_hash
+  ansible.builtin.set_fact:
+    semaphoreui_cookie_hash: "{{ secret }}"
+  no_log: true
+
+- name: Include random
+  ansible.builtin.include_tasks: random.yml
+  vars:
+    secretdir: "{{ semaphoreui_home }}"
+    secretprefix: .secrets-cookie_encryption
+    secretlength: 32
+    secretbase64: true
+    name_random: cookie_encryption
+- name: Set fact semaphoreui_cookie_encryption
+  ansible.builtin.set_fact:
+    semaphoreui_cookie_encryption: "{{ secret }}"
+  no_log: true
+
+- name: Include random
+  ansible.builtin.include_tasks: random.yml
+  vars:
+    secretdir: "{{ semaphoreui_home }}"
+    secretprefix: .secrets-access_key_encryption
+    secretlength: 32
+    secretbase64: true
+    name_random: access_key_encryption
+- name: Set fact semaphoreui_access_key_encryption
+  ansible.builtin.set_fact:
+    semaphoreui_access_key_encryption: "{{ secret }}"
+  no_log: true
+
+# FIXME! lookup inside template makes file regenerated each time
+#   with different secrets
+- name: Configure semaphore
+  ansible.builtin.template:
+    src: "{{ semaphoreui_config_template }}"
+    dest: "/etc/semaphore/config.json"
+    mode: '0640'
+    owner: root
+    group: "{{ semaphoreui_user }}"
+    validate: "python3 -mjson.tool %s"
+    backup: true
+  notify:
+    - Restart semaphoreui
+
+# https://github.com/semaphoreui/semaphore/discussions/839#discussioncomment-11054070
+- name: Configure semaphore requirements.txt
+  ansible.builtin.copy:
+    content: |
+      ansible
+      ansible-lint
+    dest: /etc/semaphore/requirements.txt
+    mode: '0644'
+    owner: "{{ semaphoreui_user }}"
+  when: false  # not working

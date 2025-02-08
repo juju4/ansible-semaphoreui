@@ -1,0 +1,70 @@
+{
+  "bolt": {
+    "host": "{{ semaphoreui_home }}/semaphore.bolt"
+  },
+  "mysql": {
+    "host": "localhost",
+    "user": "{{ semaphoreui_db_user }}",
+    "pass": "{{ semaphoreui_db_pass }}",
+    "name": "{{ semaphoreui_db_name }}",
+    "options": {}
+  },
+  "postgres": {
+    "host": "localhost",
+    "user": "{{ semaphoreui_db_user }}",
+    "pass": "{{ semaphoreui_db_pass }}",
+    "name": "{{ semaphoreui_db_name }}",
+    "options": {}
+  },
+  "dialect": "{{ semaphoreui_db_type }}",
+  "port": "",
+  "interface": "localhost",
+  "tmp_path": "/tmp/semaphore",
+  "cookie_hash": "{{ semaphoreui_cookie_hash }}",
+  "cookie_encryption": "{{ semaphoreui_cookie_encryption }}",
+  "access_key_encryption": "{{ semaphoreui_access_key_encryption }}",
+  "email_sender": "",
+  "email_host": "",
+  "email_port": "",
+  "web_host": "/",
+  "auth": {
+    "totp": {
+      "enabled": true,
+      "allow_recovery": true
+    }
+  },
+  "ldap_binddn": "",
+  "ldap_bindpassword": "",
+  "ldap_server": "",
+  "ldap_searchdn": "",
+  "ldap_searchfilter": "",
+  "ldap_mappings": {
+    "dn": "",
+    "mail": "",
+    "uid": "",
+    "cn": ""
+  },
+{% if semaphoreui_oidc_enable | bool %}
+  "oidc_providers": {
+    "forgejo": {
+      "display_name":"{{ semaphoreui_oidc_display }}",
+      "provider_url":"{{ semaphoreui_oidc_url }}",
+      "client_id":"{{ semaphoreui_oidc_clientid }}",
+      "client_secret":"{{ semaphoreui_oidc_clientsecret }}",
+      "redirect_url":"{{ semaphoreui_oidc_redirect_url }}"
+    }
+  },
+{% endif %}
+  "telegram_chat": "",
+  "telegram_token": "",
+  "concurrency_mode": "",
+  "max_parallel_tasks": 0,
+  "email_alert": false,
+  "telegram_alert": false,
+  "slack_alert": false,
+  "slack_url": "",
+  "rocketchat_alert": false,
+  "rocketchat_url": "",
+  "ldap_enable": false,
+  "ldap_needtls": false
+}

@@ -1,0 +1,56 @@
+---
+
+- name: Ensure semaphore .ssh dir exists
+  ansible.builtin.file:
+    path: "{{ semaphoreui_home }}/.ssh"
+    state: directory
+    mode: '0700'
+    owner: "{{ semaphoreui_user }}"
+
+- name: Generate an OpenSSH keypair for semaphore
+  community.crypto.openssh_keypair:
+    path: "{{ semaphoreui_home }}/.ssh/id_ed25519"
+    type: ed25519
+    comment: "semaphore@{{ ansible_fqdn }}-{{ ansible_date_time.date }}"
+    mode: '0600'
+    owner: "{{ semaphoreui_user }}"
+
+- name: Configure semaphore ssh with Proxyjump
+  ansible.builtin.copy:
+    content: |
+      Host {{ semaphoreui_sshjumphost }}
+        Hostname {{ semaphoreui_sshjumphost }}
+        User {{ semaphoreui_sshjumpuser }}
+        IdentityFile {{ semaphoreui_home }}/.ssh/id_ed25519
+      Host github.com
+        ProxyJump {{ semaphoreui_sshjumphost }}
+    dest: "{{ semaphoreui_home }}/.ssh/config"
+    mode: '0600'
+    owner: "{{ semaphoreui_user }}"
+
+- name: Get semaphore ssh pubkey
+  ansible.builtin.command:
+    cmd: "cat {{ semaphoreui_home }}/.ssh/id_ed25519.pub"
+  register: s_key
+  changed_when: false
+
+- name: Set authorized key to jump host
+  ansible.posix.authorized_key:
+    user: "{{ semaphoreui_sshjumpuser }}"
+    state: present
+    key: "{{ s_key.stdout }}"
+    key_options: 'from="{{ semaphoreui_sshjumphost_ip }}",no-agent-forwarding,no-pty,no-user-rc,no-x11-forwarding,permitopen="github.com:22"'
+  delegate_to: "{{ semaphoreui_sshjumphost_ansiblename }}"
+
+- name: Test github ssh connectivity
+  ansible.builtin.command:
+    cmd: ssh -o StrictHostKeyChecking=accept-new -T git@github.com
+  register: ssh_t_github
+  become: yes
+  become_user: "{{ semaphoreui_user }}"
+  changed_when: false
+  failed_when:
+    - "'successfully authenticated, but GitHub does not provide shell access.' not in ssh_t_github.stderr"
+    - ssh_t_github.rc != 0
+  when:
+    - semaphoreui_sshjump_test_enable | bool

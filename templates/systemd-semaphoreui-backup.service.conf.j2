@@ -1,0 +1,14 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=semaphoreui backup
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+User=root
+ExecStart={{ scriptsdir }}/backup-semaphoreui.sh
+WorkingDirectory={{ backupdir }}
+
+[Install]
+WantedBy=multi-user.target

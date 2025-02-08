@@ -1,0 +1,50 @@
+---
+
+- name: Set fact is_container
+  ansible.builtin.set_fact:
+    is_container: true
+  when: >
+    (ansible_virtualization_type is defined and
+      (ansible_virtualization_type == "docker" or ansible_virtualization_type == "containerd")
+    )
+
+- name: Install ansible package
+  ansible.builtin.package:
+    name: ansible
+    state: present
+
+- name: Import semaphoreui
+  ansible.builtin.import_tasks: semaphoreui.yml
+
+- name: Import sshjumphost
+  ansible.builtin.import_tasks: sshjumphost.yml
+  when:
+    - semaphoreui_sshjumphost_enable | bool
+
+- name: Import systemd
+  ansible.builtin.import_tasks: systemd.yml
+
+- name: Import backup-restore
+  ansible.builtin.import_tasks: backup-restore.yml
+
+- name: Ensure semaphore service is started and enabled
+  ansible.builtin.service:
+    name: semaphoreui
+    state: started
+    enabled: yes
+  when:
+    - not is_container | bool
+
+- name: Configure semaphore users
+  ansible.builtin.command:
+    cmd: 'semaphore --config /etc/semaphore/config.json user add {% if item.isadmin | bool %}--admin {% endif %}--login {{ item.login }} --email {{ item.email }} --name "{{ item.name }}" --password "{{ item.pass }}"'
+  loop: "{{ semaphoreui_app_users }}"
+  become: yes
+  become_user: "{{ semaphoreui_user }}"
+  register: susers_cmd
+  changed_when: "' added' in susers_cmd.stdout"
+  failed_when:
+    - susers_cmd.rc != 0
+    - "'Duplicate entry ' not in susers_cmd.stderr"
+  when:
+    - not is_container | bool

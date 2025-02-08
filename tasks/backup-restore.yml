@@ -1,0 +1,40 @@
+---
+
+- name: Ensure scripts directory exists
+  ansible.builtin.file:
+    path: "{{ scriptsdir }}"
+    state: "directory"
+    mode: "0755"
+
+- name: Add backup script
+  ansible.builtin.template:
+    src: "backup-semaphoreui.sh.j2"
+    dest: "{{ scriptsdir }}/backup-semaphoreui.sh"
+    mode: "0755"
+- name: Add restore script
+  ansible.builtin.template:
+    src: "restore-semaphoreui.sh.j2"
+    dest: "{{ scriptsdir }}/restore-semaphoreui.sh"
+    mode: "0755"
+
+- name: Ensure service semaphoreui-backup.service exists
+  ansible.builtin.template:
+    src: systemd-semaphoreui-backup.service.conf.j2
+    dest: /etc/systemd/system/semaphoreui-backup.service
+    mode: '0644'
+  notify:
+    - Reload systemd
+
+- name: Ensure service semaphoreui-backup.timer exists
+  ansible.builtin.template:
+    src: systemd-semaphoreui-backup.timer.conf.j2
+    dest: /etc/systemd/system/semaphoreui-backup.timer
+    mode: '0644'
+  notify:
+    - Reload systemd
+
+- name: Ensure service semaphoreui-backup is enabled
+  ansible.builtin.service:
+    name: semaphoreui-backup.timer
+    enabled: yes
+    state: started

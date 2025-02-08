@@ -1,0 +1,37 @@
+---
+# secretdir string
+# secretprefix string
+# secretlength int
+# secretbase64 bool
+# name_random string
+
+- name: Check if existing secrets
+  ansible.builtin.stat:
+    path: "{{ secretdir }}/{{ secretprefix }}-{{ name_random }}"
+  register: s
+
+- name: Existing secret
+  when: s.stat.exists
+  block:
+    - name: Recover existing salt
+      ansible.builtin.command: "cat {{ secretdir }}/{{ secretprefix }}-{{ name_random }}"
+      changed_when: false
+      register: s2
+      no_log: true
+    - name: Set fact salt - existing
+      ansible.builtin.set_fact:
+        secret: "{{ s2.stdout_lines.0 }}"
+      no_log: true
+
+- name: New secret
+  when: not s.stat.exists
+  block:
+    - name: Set fact salt - new
+      ansible.builtin.set_fact:  # noqa no-handler
+        secret: "{{ lookup('community.general.random_string', length=secretlength, base64=secretbase64) | escape }}"
+      no_log: true
+    - name: Save secret
+      ansible.builtin.copy:
+        content: "{{ secret }}"
+        dest: "{{ secretdir }}/{{ secretprefix }}-{{ name_random }}"
+        mode: '0400'

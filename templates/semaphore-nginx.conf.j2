@@ -1,0 +1,74 @@
+{{ ansible_managed | comment }}
+
+# /etc/nginx/site-enabled/semaphore
+# https://docs.semaphoreui.com/administration-guide/security/
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    include /etc/nginx/harden-nginx-https;
+{% if hardenwebserver_cert is defined and hardenwebserver_cert == 'selfsigned' %}
+    ssl_certificate {{ hardenwebserver_ssl_cert | default( ssl_dir + "/" + ansible_fqdn + ".crt") }};
+{% else %}
+    ssl_certificate {{ hardenwebserver_ssl_cert | default(ssl_fullchain) }};
+{% endif %}
+    ssl_certificate_key {{ hardenwebserver_ssl_key | default( ssl_privatedir + "/" + ansible_fqdn + ".key") }};
+
+    server_name {{ ansible_fqdn }};
+
+    access_log /var/log/nginx/semaphore.access.log;
+    error_log /var/log/nginx/semaphore.error.log;
+
+    server_tokens off;
+    etag off;
+
+  # required to avoid HTTP 411: see Issue #1486
+  # (https://github.com/docker/docker/issues/1486)
+  chunked_transfer_encoding on;
+
+{% if harden_nginx_cspreport_template is defined and harden_nginx_cspreport_template %}
+    location ~ /csp/report.php {
+        allow all;
+        include snippets/fastcgi-php.conf;
+        fastcgi_param SCRIPT_FILENAME $request_filename;
+        fastcgi_pass unix:/var/run/php/php{{ harden_nginx_phpdir | regex_replace('^/etc/php/', '') }}-fpm.sock;
+    }
+
+    location ~ /csp/test-csp.html {
+        add_header Content-Security-Policy "default-src 'none'; script-src 'self'; connect-src 'self'; img-src 'self'; style-src 'self'; upgrade-insecure-requests; require-trusted-types-for 'script'; report-uri /csp/report.php;";
+    }
+
+    location ~ /csp/log {
+        deny all;
+    }
+
+{% endif %}
+
+  location / {
+    add_header X-Frame-Options SAMEORIGIN;
+    #add_header X-Frame-Options DENY;
+    add_header Strict-Transport-Security "max-age=63072000; includeSubdomains; preload";
+    # CSP?
+    add_header Content-Security-Policy "{{ hardenwebserver_header_csp }}";
+    #add_header Referrer-Policy strict-origin-when-cross-origin;
+    add_header Referrer-Policy origin;
+
+    proxy_pass http://127.0.0.1:3000/;
+    proxy_set_header Host $http_host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    proxy_buffering off;
+    proxy_request_buffering off;
+  }
+
+  location /api/ws {
+    proxy_pass http://127.0.0.1:3000/api/ws;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Origin "";
+  }
+}

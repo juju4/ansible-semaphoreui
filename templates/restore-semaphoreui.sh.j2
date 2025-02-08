@@ -1,0 +1,29 @@
+#!/bin/sh
+{{ ansible_managed | comment }}
+
+# restore script for semaphoreui
+
+export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+umask 077
+
+if [ $# -gt 1 -a -r "$1" ]; then
+    backupfile=$1
+else
+    backupfile={{ backupdir }}/backup-semaphoreui.tar.gz
+fi
+
+tmpdir=`mktemp -d /tmp/restore.XXXXXX || exit 1`
+
+tar xzf "$backupfile" -C "tmpdir"
+
+systemctl stop semaphoreui
+
+{% if semaphoreui_db_type == 'mysql' %}
+mysql -u "{{ semaphoreui_db_user }}" "{{ semaphoreui_db_name }}" < "${tmpdir}{{ backupdir }}/dump-semaphoreui.sql"
+{% elif semaphoreui_db_type == 'postgres' %}
+sudo -u postgres psql --set ON_ERROR_STOP=on -f $tmpdir{{ backupdir }}/dump-semaphoreui.sql "{{ semaphoreui_db_name }}"
+sudo -u postgres vacuumdb --dbname="{{ semaphoreui_db_name }}" --analyze --verbose
+
+{% endif %}
+
+systemctl start semaphoreui

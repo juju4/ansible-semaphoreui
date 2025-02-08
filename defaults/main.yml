@@ -1,0 +1,45 @@
+---
+
+semaphoreui_pkg_url: "https://github.com/semaphoreui/semaphore/releases/download/v2.12.4/semaphore_2.12.4_linux_amd64.deb"
+semaphoreui_pkg_hash: "sha256:2016dc0da42627729b3c158df49056e96a38e395469a632b4135d2d304e7b493"
+
+semaphoreui_user: _semaphore
+semaphoreui_home: /var/lib/_semaphore
+semaphoreui_app_users:
+  - { login: sadmin,
+      email: sadmin@localhost,
+      name: "Semaphore admin",
+      pass: "New$Password",
+      isadmin: true
+  }
+
+semaphoreui_config_template: semaphore-config.json.j2
+semaphoreui_db_type: mysql
+# semaphoreui_db_type: postgres
+# semaphoreui_db_type: bolt
+semaphoreui_db_name: semaphoredb
+semaphoreui_db_user: semaphore
+semaphoreui_db_pass: semaphore
+
+semaphoreui_sshjumphost_enable: false
+# for ssh config
+semaphoreui_sshjumphost: jump.example.com
+semaphoreui_sshjumpuser: jumpuser
+semaphoreui_sshjumphost_ip: 192.168.12.34
+# ansible inventoryname for delegate_to
+semaphoreui_sshjumphost_ansiblename: jump
+# before testing, you must add semaphore user ssh pubkey to github
+semaphoreui_sshjump_test_enable: false
+
+semaphoreui_oidc_enable: false
+semaphoreui_oidc_display: "Sign in with OpenID"
+semaphoreui_oidc_url: "https://openid.corp"
+semaphoreui_oidc_clientid: "{{ vault_semaphoreui_oauth2_client_id }}"
+semaphoreui_oidc_clientsecret: "{{ vault_semaphoreui_oauth2_client_secret }}"
+semaphoreui_oidc_redirect_url: "https://semaphore.example.com/api/auth/oidc/<service>/redirect/"
+
+semaphoreui_cgroups_restriction_enable: true
+
+backupdir: /var/_backup
+scriptsdir: /usr/local/scripts
+is_container: false

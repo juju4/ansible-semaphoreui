@@ -1,0 +1,24 @@
+#!/bin/sh
+{{ ansible_managed | comment }}
+
+# backup script for semaphoreui
+
+export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+umask 077
+
+date=$(date +%Y-%m-%d)
+dest={{ backupdir }}
+[ ! -d "$dest" ] && install -d -m 0700 -o root "$dest"
+destfile="$dest/backup-semaphoreui-$date.tar.gz"
+
+{% if semaphoreui_db_type == 'mysql' %}
+mysqldump -u {{ semaphoreui_db_user }} --opt --single-transaction "{{ semaphoreui_db_name }}" > "${dest}/dump-semaphoreui.sql"
+{% elif semaphoreui_db_type == 'postgres' %}
+sudo -u postgres pg_dump -c "{{ semaphoreui_db_name }}" > "${dest}/dump-semaphoreui.sql"
+{% endif %}
+
+tar czf "$destfile" "$dest/dump-semaphoreui.sql"
+rm "$dest/dump-semaphoreui.sql"
+
+tar tzf "$destfile" > /dev/null
+openssl dgst -sha512 "$destfile" > "$destfile.distinfo"
