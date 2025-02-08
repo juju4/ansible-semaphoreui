@@ -11,12 +11,12 @@
     hardenwebserver_https_template: ../../templates/semaphore-nginx.conf.j2
     hardenwebserver_header_csp: "default-src 'none'; script-src 'self' 'unsafe-inline' 'report-sample'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests; report-uri /csp/report.php;"
     mysql_databases:
-      - name: "{{ semaphore_db_name }}"
+      - name: "{{ semaphoreui_db_name }}"
     mysql_users:
-      - name: "{{ semaphore_db_user }}"
+      - name: "{{ semaphoreui_db_user }}"
         host: localhost
-        password: "{{ semaphore_db_pass }}"
-        priv: "{{ semaphore_db_name }}.*:ALL"
+        password: "{{ semaphoreui_db_pass }}"
+        priv: "{{ semaphoreui_db_name }}.*:ALL"
   pre_tasks:
     - name: Ubuntu | Install python3
       ansible.builtin.raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal)
