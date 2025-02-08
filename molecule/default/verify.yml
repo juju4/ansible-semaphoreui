@@ -106,6 +106,5 @@
           - "'Server is running' in log1.stdout"
           - "'Fail' not in log1.stdout"
           - "'error' not in log1.stdout"
-      ignore_errors: true
       when:
         - not is_container|bool
