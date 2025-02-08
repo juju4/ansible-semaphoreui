@@ -38,3 +38,5 @@
     name: semaphoreui-backup.timer
     enabled: yes
     state: started
+  when:
+    - not is_container | bool
