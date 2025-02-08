@@ -119,10 +119,14 @@ jobs:
         run: |
           set -x
           ls -l /etc/mysql/
+          sudo cat /etc/mysql/debian.cnf || true
+          sudo cat /etc/mysql/my.cnf || true
           ls -l /var/lib/mysql/
           sudo ls -l ~/.my.cnf /root/.my.cnf || true
-          mysql -e 'show tables' misp || true
-          mysql -e 'show schemas' misp || true
+          mysql -e 'show tables' semaphoredb || true
+          mysql -e 'show schemas' semaphoredb || true
+          mysql -u root -e 'show tables' semaphoredb || true
+          mysql -u root -e 'show schemas' semaphoredb || true
           mysql -u root -p root -e 'show tables' semaphoredb || true
           mysql -u root -p root -e 'show schemas' semaphoredb || true
         if: ${{ always() }}
