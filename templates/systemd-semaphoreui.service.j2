@@ -19,6 +19,8 @@ Restart=always
 RestartSec=10s
 User={{ semaphoreui_user }}
 Group={{ semaphoreui_user }}
+# https://github.com/semaphoreui/semaphore/issues/2706#issuecomment-2642796586
+Environment="SEMAPHORE_FORWARDED_ENV_VARS=[\"http_proxy\", \"https_proxy\"]"
 
 # Reduce Attack Surface
 NoNewPrivileges=yes
