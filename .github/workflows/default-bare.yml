@@ -160,5 +160,6 @@ jobs:
         run: |
           set -x
           sudo journalctl -u semaphoreui -l --no-pager
+          sudo journalctl -u mysql -l --no-pager
         if: ${{ always() }}
         continue-on-error: true
