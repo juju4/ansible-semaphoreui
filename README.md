@@ -1,4 +1,4 @@
-[![Actions Status - Master](https://github.com/juju4/ansible-semaphoreui/workflows/AnsibleCI/badge.svg)](https://github.com/juju4/ansible-semaphoreui/actions?query=branch%3Amaster)
+[![Actions Status - Main](https://github.com/juju4/ansible-semaphoreui/workflows/AnsibleCI/badge.svg)](https://github.com/juju4/ansible-semaphoreui/actions?query=branch%3Amain)
 [![Actions Status - Devel](https://github.com/juju4/ansible-semaphoreui/workflows/AnsibleCI/badge.svg?branch=devel)](https://github.com/juju4/ansible-semaphoreui/actions?query=branch%3Adevel)
 
 # semaphoreui ansible role
