@@ -1,7 +1,7 @@
 ---
 
-semaphoreui_pkg_url: "https://github.com/semaphoreui/semaphore/releases/download/v2.12.4/semaphore_2.12.4_linux_amd64.deb"
-semaphoreui_pkg_hash: "sha256:2016dc0da42627729b3c158df49056e96a38e395469a632b4135d2d304e7b493"
+semaphoreui_pkg_url: "https://github.com/semaphoreui/semaphore/releases/download/v2.12.14/semaphore_2.12.14_linux_amd64.deb"
+semaphoreui_pkg_hash: "sha256:7a8a537151b5acd40d6f14e9cd515084a0c0ef71e27c67cf700e7844b1f61e47"
 
 semaphoreui_user: _semaphore
 semaphoreui_home: /var/lib/_semaphore
