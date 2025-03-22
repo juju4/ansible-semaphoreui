@@ -39,6 +39,7 @@ semaphoreui_oidc_clientsecret: "{{ vault_semaphoreui_oauth2_client_secret }}"
 semaphoreui_oidc_redirect_url: "https://semaphore.example.com/api/auth/oidc/<service>/redirect/"
 
 semaphoreui_cgroups_restriction_enable: true
+semaphoreui_webproxy_env_enable: false
 
 backupdir: /var/_backup
 scriptsdir: /usr/local/scripts
