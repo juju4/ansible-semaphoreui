@@ -20,6 +20,8 @@
   ansible.builtin.package:
     deb: "/var/_install/{{ semaphoreui_pkg_url | basename }}"
     state: present
+  notify:
+    - Restart semaphoreui
 
 - name: Add semaphore user
   ansible.builtin.user:
