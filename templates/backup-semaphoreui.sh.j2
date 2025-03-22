@@ -12,7 +12,9 @@ dest={{ backupdir }}
 destfile="$dest/backup-semaphoreui-$date.tar.gz"
 
 {% if semaphoreui_db_type == 'mysql' %}
-mysqldump -u {{ semaphoreui_db_user }} --opt --single-transaction "{{ semaphoreui_db_name }}" > "${dest}/dump-semaphoreui.sql"
+# mysqldump -u {{ semaphoreui_db_user }} --opt --single-transaction "{{ semaphoreui_db_name }}" > "${dest}/dump-semaphoreui.sql"
+# use default root + ~/.my.cnf. semaphore user would need extra privileges for mysqldump
+mysqldump --opt --single-transaction "{{ semaphoreui_db_name }}" > "${dest}/dump-semaphoreui.sql"
 {% elif semaphoreui_db_type == 'postgres' %}
 sudo -u postgres pg_dump -c "{{ semaphoreui_db_name }}" > "${dest}/dump-semaphoreui.sql"
 {% endif %}
