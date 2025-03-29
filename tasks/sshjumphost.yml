@@ -11,6 +11,7 @@
   community.crypto.openssh_keypair:
     path: "{{ semaphoreui_home }}/.ssh/id_ed25519"
     type: ed25519
+    passphrase: "{{ semaphoreui_user_sshjumphost_sshkey_pass | default(omit) }}"
     comment: "semaphore@{{ ansible_fqdn }}-{{ ansible_date_time.date }}"
     mode: '0600'
     owner: "{{ semaphoreui_user }}"
