@@ -15,6 +15,23 @@
   ansible.builtin.package:
     name: ansible
     state: present
+  when:
+    - semaphore_ansible == 'package'
+
+- name: Virtualenv
+  when:
+    - semaphore_ansible == 'venv'
+  block:
+    - name: Install python* packages
+      ansible.builtin.package:
+        name:
+          - python3-venv
+          - python3-pip
+        state: present
+    - name: Install ansible in virtualenv
+      ansible.builtin.pip:
+        name: ansible
+        virtualenv: "{{ semaphoreui_venv }}"
 
 - name: Import semaphoreui
   ansible.builtin.import_tasks: semaphoreui.yml
