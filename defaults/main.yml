@@ -41,6 +41,7 @@ semaphoreui_oidc_redirect_url: "https://semaphore.example.com/api/auth/oidc/<ser
 
 semaphoreui_cgroups_restriction_enable: true
 semaphoreui_webproxy_env_enable: false
+semaphoreui_webproxy_env_file: /etc/environment
 
 backupdir: /var/_backup
 scriptsdir: /usr/local/scripts
