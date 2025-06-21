@@ -30,7 +30,7 @@
         state: present
     - name: Install ansible in virtualenv
       ansible.builtin.pip:
-        name: ansible
+        name: "{{ ['ansible'] + semaphoreui_venv_pip }}"
         virtualenv: "{{ semaphoreui_venv }}"
 
 - name: Import semaphoreui

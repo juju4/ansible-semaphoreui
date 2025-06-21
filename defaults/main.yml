@@ -45,6 +45,7 @@ semaphoreui_webproxy_env_file: /etc/environment
 semaphoreui_systemd_execstartpre: []
 semaphore_ansible: 'package'  # tasks/main or venv + python3-venv/pip
 # semaphoreui_venv: /var/lib/_semaphore/venv
+semaphoreui_venv_pip: ['passlib', 'jmespath']
 # semaphoreui_systemd_execstartpre: ["/bin/bash -c 'source {{ semaphoreui_venv }}/bin/activate'"]
 
 backupdir: /var/_backup
