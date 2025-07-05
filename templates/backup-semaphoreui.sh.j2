@@ -10,6 +10,7 @@ date=$(date +%Y-%m-%d)
 dest={{ backupdir }}
 [ ! -d "$dest" ] && install -d -m 0700 -o root "$dest"
 destfile="$dest/backup-semaphoreui-$date.tar.gz"
+dirs="/etc/semaphore"
 
 {% if semaphoreui_db_type == 'mysql' %}
 # mysqldump -u {{ semaphoreui_db_user }} --opt --single-transaction "{{ semaphoreui_db_name }}" > "${dest}/dump-semaphoreui.sql"
@@ -19,7 +20,7 @@ mysqldump --opt --single-transaction "{{ semaphoreui_db_name }}" > "${dest}/dump
 sudo -u postgres pg_dump -c "{{ semaphoreui_db_name }}" > "${dest}/dump-semaphoreui.sql"
 {% endif %}
 
-tar czf "$destfile" "$dest/dump-semaphoreui.sql"
+tar czf "$destfile" ${dirs} "$dest/dump-semaphoreui.sql"
 rm "$dest/dump-semaphoreui.sql"
 
 tar tzf "$destfile" > /dev/null
