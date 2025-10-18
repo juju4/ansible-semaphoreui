@@ -46,9 +46,18 @@
   },
 {% if semaphoreui_oidc_enable | bool %}
   "oidc_providers": {
-    "forgejo": {
+    "{{ semaphoreui_oidc_name }}": {
       "display_name":"{{ semaphoreui_oidc_display }}",
       "provider_url":"{{ semaphoreui_oidc_url }}",
+{%     if semaphoreui_oidc_scopes is defined and semaphoreui_oidc_scopes | length > 0 %}
+      "scopes": {{ semaphoreui_oidc_scopes | to_json }},
+{%     endif %}
+{%     if semaphoreui_oidc_username_claim is defined and semaphoreui_oidc_username_claim | length > 0 %}
+      "username_claim": {{ semaphoreui_oidc_username_claim | to_json }},
+{%     endif %}
+{%     if semaphoreui_oidc_name_claim is defined and semaphoreui_oidc_name_claim | length > 0 %}
+      "name_claim": {{ semaphoreui_oidc_name_claim | to_json }},
+{%     endif %}
       "client_id":"{{ semaphoreui_oidc_clientid }}",
       "client_secret":"{{ semaphoreui_oidc_clientsecret }}",
       "redirect_url":"{{ semaphoreui_oidc_redirect_url }}"
