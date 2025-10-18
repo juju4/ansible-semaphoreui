@@ -42,6 +42,7 @@ semaphoreui_oidc_redirect_url: "https://semaphore.example.com/api/auth/oidc/<ser
 semaphoreui_cgroups_restriction_enable: true
 semaphoreui_webproxy_env_enable: false
 semaphoreui_webproxy_env_file: /etc/environment
+semaphoreui_webproxy_env_content: ''
 semaphoreui_systemd_execstartpre: []
 semaphore_ansible: 'package'  # tasks/main or venv + python3-venv/pip
 # semaphoreui_venv: /var/lib/_semaphore/venv
