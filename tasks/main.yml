@@ -66,5 +66,6 @@
   failed_when:
     - susers_cmd.rc != 0
     - "'Duplicate entry ' not in susers_cmd.stderr"
+  no_log: "{{ semaphore_ui_no_log | default(true) }}"
   when:
     - not is_container | bool
