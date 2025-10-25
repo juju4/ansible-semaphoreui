@@ -7,6 +7,11 @@
     mode: '0700'
     owner: "{{ semaphoreui_user }}"
 
+- name: Check if existing OpenSSH key
+  ansible.builtin.stat:
+    path: "{{ semaphoreui_home }}/.ssh/id_ed25519"
+  register: sshkey
+
 - name: Generate an OpenSSH keypair for semaphore
   community.crypto.openssh_keypair:
     path: "{{ semaphoreui_home }}/.ssh/id_ed25519"
@@ -15,6 +20,8 @@
     comment: "semaphore@{{ ansible_fqdn }}-{{ ansible_date_time.date }}"
     mode: '0600'
     owner: "{{ semaphoreui_user }}"
+  when:
+    - not sshkey.stat.exists
 
 - name: Configure semaphore ssh with Proxyjump
   ansible.builtin.copy:
