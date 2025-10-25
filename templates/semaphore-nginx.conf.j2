@@ -4,7 +4,6 @@
 # https://docs.semaphoreui.com/administration-guide/security/
 server {
     listen 443 ssl http2;
-    listen [::]:443 ssl http2;
 
     include /etc/nginx/harden-nginx-https;
 {% if hardenwebserver_cert is defined and hardenwebserver_cert == 'selfsigned' %}
