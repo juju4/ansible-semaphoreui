@@ -12,7 +12,7 @@
   ansible.builtin.get_url:
     url: "{{ semaphoreui_pkg_url }}"
     dest: "/var/_install/{{ semaphoreui_pkg_url | basename }}"
-    checksum: "{{ semaphoreui_pkg_hash }}"
+    checksum: "{{ semaphoreui_pkg_hash | default(omit) }}"
     mode: '0644'
     owner: root
 

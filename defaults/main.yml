@@ -1,7 +1,10 @@
 ---
 
-semaphoreui_pkg_url: "https://github.com/semaphoreui/semaphore/releases/download/v2.13.0/semaphore_2.13.0_linux_amd64.deb"
-semaphoreui_pkg_hash: "sha256:a39aa9d9fef1df77e7f51f50a623c75b57a18f9aa0668b5a0e7d46b47efd768f"
+# renovate: datasource=github-releases depName=semaphoreui/semaphore
+semaphoreui_github_version: 'v2.13.0'
+semaphoreui_version: "{{ semaphoreui_github_version | regex_replace('^v', '') }}"
+semaphoreui_pkg_url: "https://github.com/semaphoreui/semaphore/releases/download/{{ semaphoreui_github_version }}/semaphore_{{ semaphoreui_version }}_linux_amd64.deb"
+# semaphoreui_pkg_hash: "sha256:a39aa9d9fef1df77e7f51f50a623c75b57a18f9aa0668b5a0e7d46b47efd768f"
 
 semaphoreui_user: _semaphore
 semaphoreui_home: /var/lib/_semaphore
