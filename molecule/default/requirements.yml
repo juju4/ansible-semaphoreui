@@ -5,3 +5,6 @@ roles:
   - name: juju4.harden_nginx
     src: https://github.com/juju4/ansible-harden-nginx/
     version: main
+  - src: https://github.com/juju4/ansible-redhat-epel/
+    version: main
+    name: juju4.redhat_epel
