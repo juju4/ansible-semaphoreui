@@ -2,6 +2,8 @@
 
 roles:
   - name: geerlingguy.mysql
+    src: https://github.com/juju4/ansible-role-mysql/
+    version: devel
   - name: juju4.harden_nginx
     src: https://github.com/juju4/ansible-harden-nginx/
     version: main
