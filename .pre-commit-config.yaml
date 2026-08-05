@@ -41,7 +41,7 @@ repos:
       - id: shellcheck
         exclude: files/save-center.sh
   - repo: https://github.com/aristanetworks/j2lint.git
-    rev: v1.2.0
+    rev: v1.3.0
     hooks:
       - id: j2lint
   - repo: local
