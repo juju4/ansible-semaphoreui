@@ -132,6 +132,7 @@ jobs:
       - name: After script - systemd
         run: |
           systemctl -l --no-pager status semaphoreui || true
+          systemctl -l --no-pager status nginx || true
           systemd-analyze --no-pager security || true
           systemd-analyze --no-pager security semaphoreui || true
         if: ${{ always() }}
